@@ -21,3 +21,16 @@ def save_current_state(directory):
         logger.error(e)
         return {"error": "the directory you requested does not exist"}, 400
     return "OK", 200
+
+
+@app.route("/<path:directory>/ischanged")
+def has_anything_changed(directory):
+    service = WatcherService(make_traverser(Path(directory)), CheckpointStoreAdapter(Path(STORE_LOCATION)), Hasher())
+    try:
+        return {"changed": service.has_anything_changed()}, 200
+    except NoPriorCheckpointSavedError as e:
+        logger.error(e)
+        return {"error": "you tried to use this endpoint without previously saving state"}, 400
+    except InvalidDirectoryRequested as e:
+        logger.error(e)
+        return {"error": "you tried to check the directory that does not exist"}, 400
