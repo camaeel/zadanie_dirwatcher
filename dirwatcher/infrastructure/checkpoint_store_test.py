@@ -22,14 +22,11 @@ def test_save_checkpoints_1():
     store.STORE_LOCATION = "dirwatcher/infrastructure/test_data/savetest1.json"
 
     store.save_checkpoints(input)
-    f = None
-    try: 
-        f = open(store.STORE_LOCATION)
+
+    with open(store.STORE_LOCATION) as f: 
+        f = open(store.STORE_LOCATION)        
         contents = f.read()
         assert contents == '{"dirwatcher/data1.py": "123"}'
-    finally:
-        if f:
-            f.close()
 
 
 def test_save_checkpoints_nonexistent_dir():
