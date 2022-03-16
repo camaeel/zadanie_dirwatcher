@@ -16,3 +16,23 @@ def test_load_checkpoints_should_raise_FileNotFoundError_when_store_file_not_fou
     with pytest.raises(FileNotFoundError):
         store.STORE_LOCATION = "some/non-existent-path.json"
         store.load_checkpoints()
+
+def test_save_checkpoints_1():
+    input = {Path("dirwatcher/data1.py"): "123"}
+    store.STORE_LOCATION = "dirwatcher/infrastructure/test_data/savetest1.json"
+
+    store.save_checkpoints(input)
+    f = None
+    try: 
+        f = open(store.STORE_LOCATION)
+        contents = f.read()
+        assert contents == '{"dirwatcher/data1.py": "123"}'
+    finally:
+        if f:
+            f.close()
+
+
+def test_save_checkpoints_nonexistent_dir():
+    with pytest.raises(FileNotFoundError):
+        store.STORE_LOCATION = "dirwatcher/infrastructure/test_data/some/non-existent-path.json"
+        store.save_checkpoints({})
